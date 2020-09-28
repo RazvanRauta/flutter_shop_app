@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class Product {
+class Product with ChangeNotifier, DiagnosticableTreeMixin {
   final String id;
   final String title;
   final String description;
@@ -14,4 +14,14 @@ class Product {
       @required this.price,
       @required this.imageUrl,
       this.isFavorite = false});
+
+  void toggleFavoriteStatus() {
+    isFavorite = !isFavorite;
+    notifyListeners();
+  }
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return '$runtimeType(id: $id,title: $title)';
+  }
 }

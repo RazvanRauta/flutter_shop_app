@@ -1,4 +1,4 @@
-import 'package:shop_app/src/models/product.dart';
+import 'package:shop_app/src/providers/product.dart';
 
 List<Product> products = [
   Product(
