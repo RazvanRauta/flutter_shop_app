@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 
-class CartItem with DiagnosticableTreeMixin {
+class CartItemModel with DiagnosticableTreeMixin {
   final String id;
   final String title;
   final int quantity;
   final double price;
 
-  CartItem(
+  CartItemModel(
       {@required this.id,
       @required this.title,
       @required this.quantity,
@@ -18,9 +18,9 @@ class CartItem with DiagnosticableTreeMixin {
 }
 
 class CartProvider with ChangeNotifier, DiagnosticableTreeMixin {
-  Map<String, CartItem> _items;
+  Map<String, CartItemModel> _items = {};
 
-  Map<String, CartItem> get items {
+  Map<String, CartItemModel> get items {
     return {..._items};
   }
 
@@ -28,7 +28,7 @@ class CartProvider with ChangeNotifier, DiagnosticableTreeMixin {
     if (_items.containsKey(productId)) {
       _items.update(
         productId,
-        (existingItem) => CartItem(
+        (existingItem) => CartItemModel(
           id: existingItem.id,
           title: existingItem.title,
           quantity: existingItem.quantity + 1,
@@ -38,7 +38,7 @@ class CartProvider with ChangeNotifier, DiagnosticableTreeMixin {
     } else {
       _items.putIfAbsent(
         productId,
-        () => CartItem(
+        () => CartItemModel(
           id: DateTime.now().toString(),
           title: title,
           quantity: 1,
@@ -46,6 +46,23 @@ class CartProvider with ChangeNotifier, DiagnosticableTreeMixin {
         ),
       );
     }
+    notifyListeners();
+  }
+
+  int get itemCount {
+    return _items.length;
+  }
+
+  double get totalAmount {
+    var total = 0.0;
+    _items.forEach(
+        (key, cartItem) => total += cartItem.price * cartItem.quantity);
+    return total;
+  }
+
+  void removeItem(String prodId) {
+    _items.remove(prodId);
+    notifyListeners();
   }
 
   @override
