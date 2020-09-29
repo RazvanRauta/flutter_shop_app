@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/src/providers/cart.dart';
+import 'package:shop_app/src/providers/orders.dart';
 import 'package:shop_app/src/widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
@@ -42,7 +43,12 @@ class CartScreen extends StatelessWidget {
                   ),
                   if (cart.totalAmount > 0)
                     FlatButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<OrdersProvider>().addOrder(
+                            cart.items.values.toList(), cart.totalAmount);
+                        context.read<CartProvider>().clearCart();
+                        Navigator.pop(context);
+                      },
                       child: Text(
                         'ORDER NOW',
                       ),
