@@ -65,6 +65,25 @@ class CartProvider with ChangeNotifier, DiagnosticableTreeMixin {
     notifyListeners();
   }
 
+  void removeSingleProduct(String prodId) {
+    if (!_items.containsKey(prodId)) {
+      return;
+    }
+    if (_items[prodId].quantity > 1) {
+      _items.update(
+        prodId,
+        (existingCartItem) => CartItemModel(
+            id: existingCartItem.id,
+            title: existingCartItem.title,
+            price: existingCartItem.price,
+            quantity: existingCartItem.quantity - 1),
+      );
+    } else {
+      _items.remove(prodId);
+    }
+    notifyListeners();
+  }
+
   void clearCart() {
     _items = {};
     notifyListeners();
