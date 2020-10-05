@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_app/src/data/products.dart';
+import '../data/products.dart';
 import 'product.dart';
 
 class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {

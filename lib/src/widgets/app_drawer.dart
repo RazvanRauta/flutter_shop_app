@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/src/screens/orders_screen.dart';
-import 'package:shop_app/src/screens/products_overview_screen.dart';
-import 'package:shop_app/src/screens/user_products_screen.dart';
+import '../screens/orders_screen.dart';
+import '../screens/products_overview_screen.dart';
+import '../screens/user_products_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override

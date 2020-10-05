@@ -1,5 +1,22 @@
 {
-    "cSpell.words": [
-        "Lato"
-    ]
+  "cSpell.words": ["Lato"],
+  "autoHeader": {
+    "format": {
+      "startWith": "/// ```",
+      "middleWith": "///",
+      "endWith": "/// ```",
+      "headerPrefix": ""
+    },
+    "header": {
+      "@author": "Razvan Rauta",
+      "Date": {
+        "type": "createTime",
+        "format": "MMM DD YYYY"
+      },
+      "Time": {
+        "type": "createTime",
+        "format": "HH:mm"
+      }
+    }
+  }
 }

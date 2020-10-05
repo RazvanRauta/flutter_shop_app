@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/src/providers/orders.dart';
-import 'package:shop_app/src/widgets/app_drawer.dart';
-import 'package:shop_app/src/widgets/order_item.dart';
+import '../providers/orders.dart';
+import '../widgets/app_drawer.dart';
+import '../widgets/order_item.dart';
 
 class OrdersScreen extends StatelessWidget {
   static String routeName = '/orders';
