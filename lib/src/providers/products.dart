@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import '../data/products.dart';
 import 'product.dart';
 
@@ -22,7 +23,17 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
   Product findById(String id) =>
       _items.firstWhere((element) => element.id == id);
 
-  void addProduct() {
+  void addProduct(Product product) {
+    print(product.toString());
+    final newProduct = Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl);
+
+    _items.add(newProduct);
+
     notifyListeners();
   }
 

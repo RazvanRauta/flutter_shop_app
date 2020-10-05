@@ -22,6 +22,6 @@ class Product with ChangeNotifier, DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return '$runtimeType(id: $id,title: $title)';
+    return '$runtimeType(id: $id,title: $title, description: $description, price: $price, imageUrl: $imageUrl)';
   }
 }
