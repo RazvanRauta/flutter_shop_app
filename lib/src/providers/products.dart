@@ -24,7 +24,6 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
       _items.firstWhere((element) => element.id == id);
 
   void addProduct(Product product) {
-    print(product.toString());
     final newProduct = Product(
         id: DateTime.now().toString(),
         title: product.title,
@@ -34,6 +33,21 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
 
     _items.add(newProduct);
 
+    notifyListeners();
+  }
+
+  void updateProduct(String id, Product editedProduct) {
+    final prodIndex = _items.indexWhere((prod) => prod.id == id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = editedProduct;
+      notifyListeners();
+    } else {
+      print('Edited product not found');
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 
