@@ -52,6 +52,9 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
       _items.add(newProduct);
 
       notifyListeners();
+    }).catchError((error) {
+      print(error);
+      throw error;
     });
   }
 
