@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../data/products.dart';
 import 'product.dart';
@@ -23,17 +27,32 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
   Product findById(String id) =>
       _items.firstWhere((element) => element.id == id);
 
-  void addProduct(Product product) {
-    final newProduct = Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl);
+  Future<void> addProduct(Product product) {
+    final url = Uri.https(env['FIREBASE_URL'], '/products.json');
 
-    _items.add(newProduct);
+    return http
+        .post(
+      url,
+      body: json.encode({
+        "title": product.title,
+        "description": product.description,
+        "price": product.price,
+        "imageUrl": product.imageUrl,
+        "isFavorite": product.isFavorite
+      }),
+    )
+        .then((response) {
+      final newProduct = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl);
 
-    notifyListeners();
+      _items.add(newProduct);
+
+      notifyListeners();
+    });
   }
 
   void updateProduct(String id, Product editedProduct) {
