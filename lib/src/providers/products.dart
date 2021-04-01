@@ -33,6 +33,9 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
       extractedData.forEach((prodId, prodData) {
         final prod = new Product(
             id: prodId,

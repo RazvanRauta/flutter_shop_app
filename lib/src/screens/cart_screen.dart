@@ -5,12 +5,20 @@ import '../providers/cart.dart';
 import '../providers/orders.dart';
 import '../widgets/cart_item.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static String routeName = '/cart';
+
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  var _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -42,20 +50,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  if (cart.totalAmount > 0)
-                    TextButton(
-                      onPressed: () {
-                        context.read<OrdersProvider>().addOrder(
-                            cart.items.values.toList(), cart.totalAmount);
-                        context.read<CartProvider>().clearCart();
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'ORDER NOW',
-                      ),
-                      style: TextButton.styleFrom(
-                          primary: Theme.of(context).primaryColor),
-                    )
+                  OrderNowButton(cart: cart)
                 ],
               ),
             ),
@@ -77,6 +72,60 @@ class CartScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class OrderNowButton extends StatefulWidget {
+  const OrderNowButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final CartProvider cart;
+
+  @override
+  _OrderNowButtonState createState() => _OrderNowButtonState();
+}
+
+class _OrderNowButtonState extends State<OrderNowButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    return TextButton(
+      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              try {
+                await context.read<OrdersProvider>().addOrder(
+                    widget.cart.items.values.toList(), widget.cart.totalAmount);
+                context.read<CartProvider>().clearCart();
+                Navigator.pop(context);
+              } catch (error) {
+                scaffoldMessenger.showSnackBar(
+                  const SnackBar(
+                    content: const Text(
+                      "Failed to place the order.",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              } finally {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+            },
+      child: _isLoading
+          ? CircularProgressIndicator()
+          : Text(
+              'ORDER NOW',
+            ),
+      style: TextButton.styleFrom(primary: Theme.of(context).primaryColor),
     );
   }
 }

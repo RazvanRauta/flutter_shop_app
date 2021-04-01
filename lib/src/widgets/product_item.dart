@@ -8,6 +8,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = context.watch<Product>();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -31,7 +32,20 @@ class ProductItem extends StatelessWidget {
                     Icons.favorite,
                   )
                 : Icon(Icons.favorite_border),
-            onPressed: () => context.read<Product>().toggleFavoriteStatus(),
+            onPressed: () async {
+              try {
+                await context.read<Product>().toggleFavoriteStatus();
+              } catch (error) {
+                scaffoldMessenger.showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "Failed to set favorite",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+            },
             color: Theme.of(context).accentColor,
           ),
           backgroundColor: Colors.black87,
