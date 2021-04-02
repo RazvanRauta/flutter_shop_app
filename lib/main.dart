@@ -7,6 +7,7 @@ import 'src/providers/cart.dart';
 import 'src/providers/orders.dart';
 import 'src/providers/products.dart';
 import 'src/theme/theme.dart';
+import 'src/screens/auth_screen.dart';
 
 Future main() async {
   await DotEnv.load();
@@ -25,6 +26,7 @@ Future main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'MyShop', theme: themeData, routes: routes);
+    return MaterialApp(
+        title: 'MyShop', home: AuthScreen(), theme: themeData, routes: routes);
   }
 }

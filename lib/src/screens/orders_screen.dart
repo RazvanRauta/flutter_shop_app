@@ -13,44 +13,57 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  bool _isLoading = false;
+  Future _ordersFuture;
+
+  Future _obtainOrdersFuture() {
+    return Provider.of<OrdersProvider>(context, listen: false)
+        .fetchAndSetOrders();
+  }
+
   @override
   void initState() {
-    setState(() {
-      _isLoading = true;
-    });
-    Provider.of<OrdersProvider>(context, listen: false)
-        .fetchAndSetOrders()
-        .then((_) {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    _ordersFuture = _obtainOrdersFuture();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final ordersProvider = context.watch<OrdersProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Your orders'),
       ),
       drawer: AppDrawer(),
-      body: _isLoading
-          ? Center(
+      body: FutureBuilder(
+        future: _ordersFuture,
+        builder: (ctx, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(
               child: CircularProgressIndicator(),
-            )
-          : RefreshIndicator(
-              onRefresh: () =>
-                  context.read<OrdersProvider>().fetchAndSetOrders(),
-              child: ListView.builder(
-                itemCount: ordersProvider.orders.length,
-                itemBuilder: (context, index) => OrderItem(
-                  order: ordersProvider.orders[index],
+            );
+          } else {
+            if (dataSnapshot.error != null) {
+              // DO error handling
+              return Center(
+                child: Text("An error occurred!"),
+              );
+            } else {
+              return Consumer<OrdersProvider>(
+                builder: (ctx, orderData, child) => RefreshIndicator(
+                  onRefresh: () =>
+                      Provider.of<OrdersProvider>(context, listen: false)
+                          .fetchAndSetOrders(),
+                  child: ListView.builder(
+                    itemCount: orderData.orders.length,
+                    itemBuilder: (context, index) => OrderItem(
+                      order: orderData.orders[index],
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            }
+          }
+        },
+      ),
     );
   }
 }
