@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shop_app/src/models/http_exception.dart';
+
+import '../models/http_exception.dart';
 
 class Product with ChangeNotifier, DiagnosticableTreeMixin {
   final String id;
@@ -20,8 +21,12 @@ class Product with ChangeNotifier, DiagnosticableTreeMixin {
       @required this.imageUrl,
       this.isFavorite = false});
 
-  Future<void> toggleFavoriteStatus() async {
-    final url = Uri.https(env['FIREBASE_URL'], '/products/$id.json');
+  Future<void> toggleFavoriteStatus(String authToken) async {
+    if (authToken == '' || authToken == null) {
+      return;
+    }
+    final _params = <String, String>{'auth': authToken};
+    final url = Uri.https(env['FIREBASE_URL'], '/products/$id.json', _params);
 
     isFavorite = !isFavorite;
     notifyListeners();

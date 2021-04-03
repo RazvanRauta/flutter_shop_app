@@ -2,16 +2,22 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shop_app/src/models/http_exception.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/http_exception.dart';
 
 import 'product.dart';
 
 class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
-  List<Product> _items = [];
-
+  List<Product> _items;
+  final String authToken;
   var _showFavoritesOnly = false;
+
+  ProductsProvider(
+    this.authToken,
+    this._items,
+  );
 
   List<Product> get items {
     if (_showFavoritesOnly) {
@@ -28,7 +34,11 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
       _items.firstWhere((element) => element.id == id);
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.https(env['FIREBASE_URL'], '/products.json');
+    if (authToken == '' || authToken == null) {
+      return;
+    }
+    final _params = <String, String>{'auth': authToken};
+    final url = Uri.https(env['FIREBASE_URL'], '/products.json', _params);
     final List<Product> fetchedProducts = [];
     try {
       final response = await http.get(url);
@@ -38,23 +48,29 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
       }
       extractedData.forEach((prodId, prodData) {
         final prod = new Product(
-            id: prodId,
-            title: prodData["title"],
-            description: prodData["description"],
-            price: prodData["price"],
-            imageUrl: prodData["imageUrl"],
-            isFavorite: prodData["isFavorite"]);
+          id: prodId,
+          title: prodData["title"],
+          description: prodData["description"],
+          price: prodData["price"],
+          imageUrl: prodData["imageUrl"],
+          isFavorite: prodData["isFavorite"],
+        );
         fetchedProducts.add(prod);
       });
       _items = fetchedProducts;
       notifyListeners();
     } catch (error) {
+      print("Error while trying to fetch and set the products");
       print(error);
     }
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.https(env['FIREBASE_URL'], '/products.json');
+    if (authToken == '' || authToken == null) {
+      return;
+    }
+    final _params = <String, String>{'auth': authToken};
+    final url = Uri.https(env['FIREBASE_URL'], '/products.json', _params);
     try {
       final response = await http.post(
         url,
@@ -72,7 +88,8 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
           title: product.title,
           description: product.description,
           price: product.price,
-          imageUrl: product.imageUrl);
+          imageUrl: product.imageUrl,
+          isFavorite: product.isFavorite);
 
       _items.add(newProduct);
       notifyListeners();
@@ -83,7 +100,11 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
   }
 
   Future<void> updateProduct(String id, Product editedProduct) async {
-    final url = Uri.https(env['FIREBASE_URL'], '/products/$id.json');
+    if (authToken == '' || authToken == null) {
+      return;
+    }
+    final _params = <String, String>{'auth': authToken};
+    final url = Uri.https(env['FIREBASE_URL'], '/products/$id.json', _params);
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       try {
@@ -109,7 +130,11 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
 
 // Optimistic delete pattern
   Future<void> deleteProduct(String id) async {
-    final url = Uri.https(env['FIREBASE_URL'], '/products/$id.json');
+    if (authToken == '' || authToken == null) {
+      return;
+    }
+    final _params = <String, String>{'auth': authToken};
+    final url = Uri.https(env['FIREBASE_URL'], '/products/$id.json', _params);
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);

@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shop_app/src/models/http_exception.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/http_exception.dart';
 
 import 'cart.dart';
 
@@ -22,15 +22,24 @@ class OrderModel {
 }
 
 class OrdersProvider with ChangeNotifier {
-  List<OrderModel> _orders = [];
+  List<OrderModel> _orders;
+  final String authToken;
+  OrdersProvider(
+    this.authToken,
+    this._orders,
+  );
 
   List<OrderModel> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
+    if (authToken == '' || authToken == null) {
+      return;
+    }
+    final _params = <String, String>{'auth': authToken};
+    final url = Uri.https(env['FIREBASE_URL'], '/orders.json', _params);
     List<OrderModel> fetchedOrders = [];
-    final url = Uri.https(env['FIREBASE_URL'], '/orders.json');
     try {
       final response = await http.get(url);
       final ordersData = json.decode(response.body) as Map<String, dynamic>;
@@ -68,7 +77,11 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItemModel> cartProducts, double total) async {
-    final url = Uri.https(env['FIREBASE_URL'], '/orders.json');
+    if (authToken == '' || authToken == null) {
+      return;
+    }
+    final _params = <String, String>{'auth': authToken};
+    final url = Uri.https(env['FIREBASE_URL'], '/orders.json', _params);
     final timestamp = DateTime.now();
 
     final response = await http.post(url,

@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -100,7 +103,7 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
       return;
@@ -110,10 +113,13 @@ class _AuthCardState extends State<AuthCard> {
       _isLoading = true;
     });
     if (_authMode == AuthMode.Login) {
-      // Log user in
+      await Provider.of<AuthProvider>(context, listen: false)
+          .signin(_authData["email"], _authData["password"]);
     } else {
-      // Sign user up
+      await Provider.of<AuthProvider>(context, listen: false)
+          .signup(_authData["email"], _authData["password"]);
     }
+
     setState(() {
       _isLoading = false;
     });
@@ -134,6 +140,8 @@ class _AuthCardState extends State<AuthCard> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -210,7 +218,25 @@ class _AuthCardState extends State<AuthCard> {
                     ),
                     child:
                         Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
-                    onPressed: _submit,
+                    onPressed: () async {
+                      try {
+                        await _submit();
+                      } catch (error) {
+                        final String errorMessage =
+                            "Something went wrong: ${error.toString().replaceAll("_", " ")}";
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              errorMessage,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 TextButton(
                   child: Text(
