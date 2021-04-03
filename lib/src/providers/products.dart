@@ -6,16 +6,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/http_exception.dart';
-
 import 'product.dart';
 
 class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
   List<Product> _items;
   final String authToken;
+  final String userId;
   var _showFavoritesOnly = false;
 
   ProductsProvider(
     this.authToken,
+    this.userId,
     this._items,
   );
 
@@ -46,14 +47,24 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
       if (extractedData == null) {
         return;
       }
+      final _params = <String, String>{'auth': authToken};
+      final favUrl = Uri.https(
+          env['FIREBASE_URL'], '/userFavorites/$userId.json', _params);
+      final favResponse = await http.get(favUrl);
+      final favData = json.decode(favResponse.body);
       extractedData.forEach((prodId, prodData) {
+        final isFav = favData == null
+            ? false
+            : favData[prodId] == null
+                ? false
+                : favData[prodId]['isFavorite'];
         final prod = new Product(
           id: prodId,
           title: prodData["title"],
           description: prodData["description"],
           price: prodData["price"],
           imageUrl: prodData["imageUrl"],
-          isFavorite: prodData["isFavorite"],
+          isFavorite: isFav,
         );
         fetchedProducts.add(prod);
       });
@@ -79,17 +90,16 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
           "description": product.description,
           "price": product.price,
           "imageUrl": product.imageUrl,
-          "isFavorite": product.isFavorite
         }),
       );
 
       final newProduct = Product(
-          id: json.decode(response.body)['name'],
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          isFavorite: product.isFavorite);
+        id: json.decode(response.body)['name'],
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
 
       _items.add(newProduct);
       notifyListeners();
@@ -115,7 +125,6 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
             "description": editedProduct.description,
             "price": editedProduct.price,
             "imageUrl": editedProduct.imageUrl,
-            "isFavorite": editedProduct.isFavorite
           }),
         );
         _items[prodIndex] = editedProduct;

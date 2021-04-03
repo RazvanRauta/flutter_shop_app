@@ -21,16 +21,16 @@ class Product with ChangeNotifier, DiagnosticableTreeMixin {
       @required this.imageUrl,
       this.isFavorite = false});
 
-  Future<void> toggleFavoriteStatus(String authToken) async {
+  Future<void> toggleFavoriteStatus(String authToken, String userId) async {
     if (authToken == '' || authToken == null) {
       return;
     }
     final _params = <String, String>{'auth': authToken};
-    final url = Uri.https(env['FIREBASE_URL'], '/products/$id.json', _params);
+    final url = Uri.https(env['FIREBASE_URL'], '/userFavorites/$userId/$id.json', _params);
 
     isFavorite = !isFavorite;
     notifyListeners();
-    final response = await http.patch(
+    final response = await http.put(
       url,
       body: json.encode(
         {"isFavorite": isFavorite},

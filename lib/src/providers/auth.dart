@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:shop_app/src/models/http_exception.dart';
 
 class AuthProvider with ChangeNotifier, DiagnosticableTreeMixin {
@@ -21,6 +21,10 @@ class AuthProvider with ChangeNotifier, DiagnosticableTreeMixin {
       return _token;
     }
     return null;
+  }
+
+  String get userId {
+    return _userId;
   }
 
   Future<void> _authenticate(String email, String password, Uri url) async {
