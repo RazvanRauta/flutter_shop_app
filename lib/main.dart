@@ -27,9 +27,10 @@ Future main() async {
         ),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProxyProvider<AuthProvider, OrdersProvider>(
-          create: (_) => OrdersProvider('', []),
+          create: (_) => OrdersProvider('','', []),
           update: (ctx, auth, previousProducts) => OrdersProvider(
             auth.token,
+            auth.userId,
             previousProducts == null ? [] : previousProducts.orders,
           ),
         )

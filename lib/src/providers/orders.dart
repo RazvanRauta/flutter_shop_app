@@ -24,8 +24,10 @@ class OrderModel {
 class OrdersProvider with ChangeNotifier {
   List<OrderModel> _orders;
   final String authToken;
+  final String userId;
   OrdersProvider(
     this.authToken,
+    this.userId,
     this._orders,
   );
 
@@ -38,7 +40,7 @@ class OrdersProvider with ChangeNotifier {
       return;
     }
     final _params = <String, String>{'auth': authToken};
-    final url = Uri.https(env['FIREBASE_URL'], '/orders.json', _params);
+    final url = Uri.https(env['FIREBASE_URL'], '/orders/$userId.json', _params);
     List<OrderModel> fetchedOrders = [];
     try {
       final response = await http.get(url);
@@ -81,7 +83,7 @@ class OrdersProvider with ChangeNotifier {
       return;
     }
     final _params = <String, String>{'auth': authToken};
-    final url = Uri.https(env['FIREBASE_URL'], '/orders.json', _params);
+    final url = Uri.https(env['FIREBASE_URL'], '/orders/$userId.json', _params);
     final timestamp = DateTime.now();
 
     final response = await http.post(url,

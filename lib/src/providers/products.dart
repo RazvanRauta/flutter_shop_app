@@ -34,11 +34,21 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
   Product findById(String id) =>
       _items.firstWhere((element) => element.id == id);
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     if (authToken == '' || authToken == null) {
       return;
     }
-    final _params = <String, String>{'auth': authToken};
+    var _params;
+
+    if (filterByUser) {
+      _params = <String, String>{
+        'auth': authToken,
+        "orderBy": '\"creatorId\"',
+        "equalTo": '\"$userId\"'
+      };
+    } else {
+      _params = <String, String>{'auth': authToken};
+    }
     final url = Uri.https(env['FIREBASE_URL'], '/products.json', _params);
     final List<Product> fetchedProducts = [];
     try {
@@ -46,6 +56,8 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
+      } else if (extractedData["error"] != null) {
+        throw HttpException(message: extractedData["error"]);
       }
       final _params = <String, String>{'auth': authToken};
       final favUrl = Uri.https(
@@ -72,7 +84,7 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
       notifyListeners();
     } catch (error) {
       print("Error while trying to fetch and set the products");
-      print(error);
+      print("Error message: $error");
     }
   }
 
@@ -90,6 +102,7 @@ class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
           "description": product.description,
           "price": product.price,
           "imageUrl": product.imageUrl,
+          "creatorId": userId,
         }),
       );
 

@@ -16,7 +16,6 @@ class CartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(price);
     return Dismissible(
       key: ValueKey(id),
       direction: DismissDirection.endToStart,
