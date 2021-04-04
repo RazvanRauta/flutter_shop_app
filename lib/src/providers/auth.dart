@@ -1,12 +1,5 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../utility/libraries.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/http_exception.dart';
 
 class AuthProvider with ChangeNotifier, DiagnosticableTreeMixin {
   String _token;

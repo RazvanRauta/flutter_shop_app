@@ -1,10 +1,5 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
+import '../utility/libraries.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import '../models/http_exception.dart';
 
 class Product with ChangeNotifier, DiagnosticableTreeMixin {
   final String id;
@@ -26,7 +21,8 @@ class Product with ChangeNotifier, DiagnosticableTreeMixin {
       return;
     }
     final _params = <String, String>{'auth': authToken};
-    final url = Uri.https(env['FIREBASE_URL'], '/userFavorites/$userId/$id.json', _params);
+    final url = Uri.https(
+        env['FIREBASE_URL'], '/userFavorites/$userId/$id.json', _params);
 
     isFavorite = !isFavorite;
     notifyListeners();

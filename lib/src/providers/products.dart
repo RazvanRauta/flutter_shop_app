@@ -1,12 +1,5 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../utility/libraries.dart';
 import 'package:http/http.dart' as http;
-
-import '../models/http_exception.dart';
-import 'product.dart';
 
 class ProductsProvider with ChangeNotifier, DiagnosticableTreeMixin {
   List<Product> _items;

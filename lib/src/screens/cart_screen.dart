@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/cart.dart';
-import '../providers/orders.dart';
-import '../widgets/cart_item.dart';
+import '../utility/libraries.dart';
 
 class CartScreen extends StatefulWidget {
   static String routeName = '/cart';
@@ -13,7 +8,6 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();

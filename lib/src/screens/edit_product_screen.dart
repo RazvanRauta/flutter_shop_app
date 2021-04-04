@@ -3,10 +3,7 @@
 ///  Date: Oct 05 2020
 ///  Time: 19:40
 /// ```
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shop_app/src/providers/product.dart';
-import 'package:shop_app/src/providers/products.dart';
+import '../utility/libraries.dart';
 
 class EditProductScreen extends StatefulWidget {
   static String routeName = '/editProductScreen';

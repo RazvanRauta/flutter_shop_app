@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import '../utility/libraries.dart';
 
 class SplashScreen extends StatelessWidget {
   static String routeName = '/splash';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import '../utility/libraries.dart';
 
 class Badge extends StatelessWidget {
   const Badge({

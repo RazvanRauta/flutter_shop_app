@@ -1,16 +1,5 @@
-import 'package:flutter/material.dart';
+import 'src/utility/libraries.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
-import 'package:provider/provider.dart';
-
-import 'src/navigation/navigation.dart';
-import 'src/providers/auth.dart';
-import 'src/providers/cart.dart';
-import 'src/providers/orders.dart';
-import 'src/providers/products.dart';
-import 'src/screens/auth_screen.dart';
-import 'src/screens/products_overview_screen.dart';
-import 'src/screens/splash_screen.dart';
-import 'src/theme/theme.dart';
 
 Future main() async {
   await DotEnv.load();

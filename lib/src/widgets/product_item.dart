@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/auth.dart';
-import '../providers/cart.dart';
-import '../providers/product.dart';
-import '../screens/product_detail_screen.dart';
+import '../utility/libraries.dart';
 
 class ProductItem extends StatelessWidget {
   @override
@@ -23,9 +17,14 @@ class ProductItem extends StatelessWidget {
               arguments: product.id,
             );
           },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder:
+                  AssetImage('lib/src/assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -37,7 +36,9 @@ class ProductItem extends StatelessWidget {
                 : Icon(Icons.favorite_border),
             onPressed: () async {
               try {
-                await context.read<Product>().toggleFavoriteStatus(auth.token, auth.userId);
+                await context
+                    .read<Product>()
+                    .toggleFavoriteStatus(auth.token, auth.userId);
               } catch (error) {
                 scaffoldMessenger.showSnackBar(
                   const SnackBar(

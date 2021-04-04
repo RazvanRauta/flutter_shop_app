@@ -1,12 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/cart.dart';
-import '../providers/products.dart';
-import '../widgets/app_drawer.dart';
-import '../widgets/badge.dart';
-import '../widgets/products_grid.dart';
-import 'cart_screen.dart';
+import '../utility/libraries.dart';
 
 enum FilterOptions { Favorites, All }
 
